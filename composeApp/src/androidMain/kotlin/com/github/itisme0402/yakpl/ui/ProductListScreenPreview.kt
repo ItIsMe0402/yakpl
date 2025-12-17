@@ -13,5 +13,6 @@ fun ProductListScreenPreview() {
             Product(it.toString(), "Product $it", "Description $it")
         },
         onSearchQueryChanged = {},
+        onLoadMore = {},
     )
 }

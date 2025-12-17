@@ -10,10 +10,12 @@ class KtorRemoteProductDataSource(
     private val httpClient: HttpClient,
 ) : RemoteProductDataSource {
 
-    override suspend fun getProducts(query: String): List<Product> {
+    override suspend fun getProducts(query: String, skip: Int, limit: Int): List<Product> {
         val response: ProductListResponse = httpClient.get(ENDPOINT_SEARCH) {
             url {
                 parameters.append(SEARCH_QUERY_PARAM_QUERY, query)
+                parameters.append(SEARCH_QUERY_PARAM_SKIP, skip.toString())
+                parameters.append(SEARCH_QUERY_PARAM_LIMIT, limit.toString())
             }
         }.body()
 
@@ -23,5 +25,7 @@ class KtorRemoteProductDataSource(
     private companion object Companion {
         const val ENDPOINT_SEARCH = "/products/search"
         const val SEARCH_QUERY_PARAM_QUERY = "q"
+        const val SEARCH_QUERY_PARAM_SKIP = "skip"
+        const val SEARCH_QUERY_PARAM_LIMIT = "limit"
     }
 }

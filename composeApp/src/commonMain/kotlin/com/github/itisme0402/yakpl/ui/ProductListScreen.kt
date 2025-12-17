@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -13,8 +14,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.github.itisme0402.yakpl.model.Product
@@ -34,6 +38,7 @@ fun ProductListScreen(viewModel: ProductListViewModel) {
         searchQuery = searchQuery,
         products = products,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
+        onLoadMore = viewModel::loadMore,
     )
 }
 
@@ -43,6 +48,7 @@ fun ProductListScreen(
     searchQuery: String,
     products: List<Product>,
     onSearchQueryChanged: (String) -> Unit,
+    onLoadMore: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -66,7 +72,27 @@ fun ProductListScreen(
                     )
                 }
             )
-            LazyColumn {
+
+            val listState = rememberLazyListState()
+            
+            // Check if we reached the bottom
+            val shouldLoadMore by remember {
+                derivedStateOf {
+                    val layoutInfo = listState.layoutInfo
+                    val totalItemsNumber = layoutInfo.totalItemsCount
+                    val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
+
+                    lastVisibleItemIndex > (totalItemsNumber - 5)
+                }
+            }
+
+            LaunchedEffect(shouldLoadMore) {
+                if (shouldLoadMore) {
+                    onLoadMore()
+                }
+            }
+
+            LazyColumn(state = listState) {
                 items(products) { product ->
                     ProductListItem(product)
                 }

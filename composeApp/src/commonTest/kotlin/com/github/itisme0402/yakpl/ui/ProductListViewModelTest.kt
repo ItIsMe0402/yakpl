@@ -45,7 +45,7 @@ class ProductListViewModelTest {
         }
 
         everySuspend {
-            getProductsUseCase.getProducts("")
+            getProductsUseCase.getProducts(query = "", skip = 0, limit = 20)
         } returns products
 
         sut = ProductListViewModel(
@@ -54,5 +54,48 @@ class ProductListViewModelTest {
         advanceUntilIdle()
 
         assertEquals(products, sut.products.value)
+    }
+
+    @Test
+    fun `loadMore appends products`() = runTest {
+        val initialProducts = List(20) { Product(id = "$it", name = "Product $it", description = "Desc $it") }
+        val moreProducts = List(5) { Product(id = "${20+it}", name = "Product ${20+it}", description = "Desc ${20+it}") }
+
+        everySuspend {
+            getProductsUseCase.getProducts("", 0, 20)
+        } returns initialProducts
+
+        everySuspend {
+            getProductsUseCase.getProducts("", 20, 20)
+        } returns moreProducts
+
+        sut = ProductListViewModel(getProductsUseCase)
+        advanceUntilIdle()
+
+        assertEquals(initialProducts, sut.products.value)
+
+        sut.loadMore()
+        advanceUntilIdle()
+
+        assertEquals(initialProducts + moreProducts, sut.products.value)
+    }
+
+    @Test
+    fun `search query change resets list`() = runTest {
+        val initialProducts = listOf(Product("1", "A", "A"))
+        val searchedProducts = listOf(Product("2", "B", "B"))
+
+        everySuspend { getProductsUseCase.getProducts("", 0, 20) } returns initialProducts
+        everySuspend { getProductsUseCase.getProducts("query", 0, 20) } returns searchedProducts
+
+        sut = ProductListViewModel(getProductsUseCase)
+        advanceUntilIdle()
+        
+        assertEquals(initialProducts, sut.products.value)
+
+        sut.onSearchQueryChanged("query")
+        advanceUntilIdle()
+
+        assertEquals(searchedProducts, sut.products.value)
     }
 }

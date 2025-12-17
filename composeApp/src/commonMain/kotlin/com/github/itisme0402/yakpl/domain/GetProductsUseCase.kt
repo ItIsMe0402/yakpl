@@ -7,7 +7,7 @@ import com.github.itisme0402.yakpl.model.Product
 class GetProductsUseCase(
     private val productRepository: ProductRepository,
 ) {
-    suspend fun getProducts(query: String): List<Product> {
-        return productRepository.getProducts(query)
+    suspend fun getProducts(query: String, skip: Int, limit: Int = 20): List<Product> {
+        return productRepository.getProducts(query, skip, limit)
     }
 }

@@ -6,7 +6,7 @@ class ProductRepositoryImpl(
     private val remoteProductDataSource: RemoteProductDataSource,
 ) : ProductRepository {
 
-    override suspend fun getProducts(query: String): List<Product> {
-        return remoteProductDataSource.getProducts(query)
+    override suspend fun getProducts(query: String, skip: Int, limit: Int): List<Product> {
+        return remoteProductDataSource.getProducts(query, skip, limit)
     }
 }

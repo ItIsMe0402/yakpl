@@ -6,6 +6,12 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
+    id("dev.mokkery") version "3.0.0"
+    kotlin("plugin.allopen") version "2.3.0"
+}
+
+allOpen {
+    annotation("com.github.itisme0402.yakpl.OpenForMokkery")
 }
 
 kotlin {
@@ -47,7 +53,12 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
+    }
+
+    sourceSets.all {
+        languageSettings.enableLanguageFeature("ExplicitBackingFields")
     }
 }
 

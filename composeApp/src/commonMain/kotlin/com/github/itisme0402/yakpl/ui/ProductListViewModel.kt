@@ -1,29 +1,34 @@
 package com.github.itisme0402.yakpl.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.github.itisme0402.yakpl.domain.GetProductsUseCase
 import com.github.itisme0402.yakpl.model.Product
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 
-class ProductListViewModel : ViewModel() {
+@OptIn(ExperimentalCoroutinesApi::class)
+class ProductListViewModel(
+    private val getProductsUseCase: GetProductsUseCase,
+) : ViewModel() {
 
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+    val searchQuery: StateFlow<String>
+        field = MutableStateFlow("")
 
-    private val _products = MutableStateFlow<List<Product>>(emptyList())
-    val products: StateFlow<List<Product>> = _products.asStateFlow()
-
-    private val allProducts = List(20) { Product(id = it.toString(), name = "Product $it", description = "This is product $it") }
-
-    init {
-        _products.value = allProducts
-    }
+    val products: StateFlow<List<Product>> = searchQuery
+        .mapLatest(getProductsUseCase::getProducts)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            emptyList(),
+        )
 
     fun onSearchQueryChanged(query: String) {
-        _searchQuery.value = query
-        _products.value = allProducts.filter { product ->
-            product.name.contains(query, ignoreCase = true) || product.description.contains(query, ignoreCase = true)
-        }
+        searchQuery.value = query
     }
 }

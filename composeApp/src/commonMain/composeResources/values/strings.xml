@@ -1,4 +1,5 @@
 <resources>
     <string name="title_products">Products</string>
     <string name="search">Search</string>
+    <string name="loading">Loading…</string>
 </resources>

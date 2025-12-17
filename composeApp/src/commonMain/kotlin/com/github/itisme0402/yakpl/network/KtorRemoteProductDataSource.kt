@@ -22,7 +22,13 @@ class KtorRemoteProductDataSource(
         return response.products.map { it.asProduct }
     }
 
+    override suspend fun getProduct(id: String): Product {
+        val response: RemoteProduct = httpClient.get("$ENDPOINT_PRODUCTS/$id").body()
+        return response.asProduct
+    }
+
     private companion object Companion {
+        const val ENDPOINT_PRODUCTS = "/products"
         const val ENDPOINT_SEARCH = "/products/search"
         const val SEARCH_QUERY_PARAM_QUERY = "q"
         const val SEARCH_QUERY_PARAM_SKIP = "skip"

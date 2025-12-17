@@ -8,5 +8,5 @@ sealed class Route {
     object Products : Route()
 
     @Serializable
-    object Details : Route()
+    data class Details(val productId: String) : Route()
 }

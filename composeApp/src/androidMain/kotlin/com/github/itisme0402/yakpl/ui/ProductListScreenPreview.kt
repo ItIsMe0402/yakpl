@@ -14,5 +14,6 @@ fun ProductListScreenPreview() {
         },
         onSearchQueryChanged = {},
         onLoadMore = {},
+        onProductClick = {},
     )
 }

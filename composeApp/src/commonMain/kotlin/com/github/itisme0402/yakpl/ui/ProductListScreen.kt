@@ -1,5 +1,6 @@
 package com.github.itisme0402.yakpl.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.itisme0402.yakpl.model.Product
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -30,15 +32,19 @@ import yakpl.composeapp.generated.resources.search
 import yakpl.composeapp.generated.resources.title_products
 
 @Composable
-fun ProductListScreen(viewModel: ProductListViewModel) {
-    val searchQuery by viewModel.searchQuery.collectAsState()
-    val products by viewModel.products.collectAsState()
+fun ProductListScreen(
+    viewModel: ProductListViewModel,
+    onProductClick: (Product) -> Unit,
+) {
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val products by viewModel.products.collectAsStateWithLifecycle()
 
     ProductListScreen(
         searchQuery = searchQuery,
         products = products,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onLoadMore = viewModel::loadMore,
+        onProductClick = onProductClick,
     )
 }
 
@@ -49,6 +55,7 @@ fun ProductListScreen(
     products: List<Product>,
     onSearchQueryChanged: (String) -> Unit,
     onLoadMore: () -> Unit,
+    onProductClick: (Product) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -94,7 +101,10 @@ fun ProductListScreen(
 
             LazyColumn(state = listState) {
                 items(products) { product ->
-                    ProductListItem(product)
+                    ProductListItem(
+                        product = product,
+                        onClick = { onProductClick(product) }
+                    )
                 }
             }
         }
@@ -102,10 +112,14 @@ fun ProductListScreen(
 }
 
 @Composable
-fun ProductListItem(product: Product) {
+fun ProductListItem(
+    product: Product,
+    onClick: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(16.dp)
     ) {
         Text(text = product.name, style = MaterialTheme.typography.titleLarge)

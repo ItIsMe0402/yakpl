@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.github.itisme0402.yakpl.ui.FavoritesScreen
 import com.github.itisme0402.yakpl.ui.ProductDetailScreen
 import com.github.itisme0402.yakpl.ui.ProductListScreen
 import com.github.itisme0402.yakpl.ui.Route
@@ -22,6 +23,9 @@ fun App() {
                     viewModel = koinViewModel(),
                     onProductClick = { product ->
                         navController.navigate(Route.Details(productId = product.id))
+                    },
+                    onFavoritesClick = {
+                        navController.navigate(Route.Favorites)
                     }
                 )
             }
@@ -29,6 +33,15 @@ fun App() {
                 val details: Route.Details = backStackEntry.toRoute()
                 ProductDetailScreen(
                     viewModel = koinViewModel { parametersOf(details.productId) },
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
+            composable<Route.Favorites> {
+                FavoritesScreen(
+                    viewModel = koinViewModel(),
+                    onProductClick = { product ->
+                        navController.navigate(Route.Details(productId = product.id))
+                    },
                     onBackClick = { navController.popBackStack() }
                 )
             }

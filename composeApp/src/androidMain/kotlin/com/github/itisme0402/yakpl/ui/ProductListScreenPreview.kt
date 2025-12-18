@@ -15,5 +15,6 @@ fun ProductListScreenPreview() {
         onSearchQueryChanged = {},
         onLoadMore = {},
         onProductClick = {},
+        onFavoritesClick = {},
     )
 }

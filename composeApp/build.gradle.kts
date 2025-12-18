@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidxRoom)
     id("dev.mokkery") version "3.0.0"
     kotlin("plugin.allopen") version "2.3.0"
 }
@@ -58,6 +60,9 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
+
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -67,6 +72,16 @@ kotlin {
 
     sourceSets.all {
         languageSettings.enableLanguageFeature("ExplicitBackingFields")
+    }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+dependencies {
+    for (targetName in listOf("Android", "IosArm64", "IosSimulatorArm64")) {
+        add("ksp$targetName", libs.androidx.room.compiler)
     }
 }
 
@@ -100,4 +115,3 @@ android {
 dependencies {
     debugImplementation(compose.uiTooling)
 }
-

@@ -1,9 +1,7 @@
 package com.github.itisme0402.yakpl.ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -13,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,6 +20,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import yakpl.composeapp.generated.resources.Res
 import yakpl.composeapp.generated.resources.ic_arrow_back
+import yakpl.composeapp.generated.resources.ic_favorite
 import yakpl.composeapp.generated.resources.loading
 
 @Composable
@@ -31,10 +29,13 @@ fun ProductDetailScreen(
     onBackClick: () -> Unit,
 ) {
     val product by viewModel.product.collectAsStateWithLifecycle()
+    val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
 
     ProductDetailContent(
         product = product,
+        isFavorite = isFavorite,
         onBackClick = onBackClick,
+        onToggleFavorite = viewModel::toggleFavorite
     )
 }
 
@@ -42,7 +43,9 @@ fun ProductDetailScreen(
 @Composable
 fun ProductDetailContent(
     product: Product?,
+    isFavorite: Boolean,
     onBackClick: () -> Unit,
+    onToggleFavorite: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -51,6 +54,17 @@ fun ProductDetailContent(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(painterResource(Res.drawable.ic_arrow_back), contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    if (product != null) {
+                        IconButton(onClick = onToggleFavorite) {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_favorite),
+                                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                                tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            )
+                        }
                     }
                 }
             )

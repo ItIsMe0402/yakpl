@@ -9,4 +9,7 @@ sealed class Route {
 
     @Serializable
     data class Details(val productId: String) : Route()
+
+    @Serializable
+    object Favorites : Route()
 }

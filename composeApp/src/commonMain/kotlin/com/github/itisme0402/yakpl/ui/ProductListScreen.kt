@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -16,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -27,6 +27,7 @@ import com.github.itisme0402.yakpl.model.Product
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import yakpl.composeapp.generated.resources.Res
+import yakpl.composeapp.generated.resources.ic_favorite
 import yakpl.composeapp.generated.resources.ic_search
 import yakpl.composeapp.generated.resources.search
 import yakpl.composeapp.generated.resources.title_products
@@ -35,6 +36,7 @@ import yakpl.composeapp.generated.resources.title_products
 fun ProductListScreen(
     viewModel: ProductListViewModel,
     onProductClick: (Product) -> Unit,
+    onFavoritesClick: () -> Unit
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val products by viewModel.products.collectAsStateWithLifecycle()
@@ -45,6 +47,7 @@ fun ProductListScreen(
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onLoadMore = viewModel::loadMore,
         onProductClick = onProductClick,
+        onFavoritesClick = onFavoritesClick
     )
 }
 
@@ -56,11 +59,17 @@ fun ProductListScreen(
     onSearchQueryChanged: (String) -> Unit,
     onLoadMore: () -> Unit,
     onProductClick: (Product) -> Unit,
+    onFavoritesClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(Res.string.title_products)) }
+                title = { Text(stringResource(Res.string.title_products)) },
+                actions = {
+                    IconButton(onClick = onFavoritesClick) {
+                        Icon(painterResource(Res.drawable.ic_favorite), contentDescription = "Favorites")
+                    }
+                }
             )
         }
     ) { paddingValues ->

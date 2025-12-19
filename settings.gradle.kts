@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.kover
+
 rootProject.name = "YAKPL"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
@@ -29,3 +31,14 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+
+plugins {
+    id("org.jetbrains.kotlinx.kover.aggregation") version "0.9.4"
+}
+
+kover {
+    enableCoverage()
+    reports {
+        includedProjects.add(":composeApp")
+    }
+}

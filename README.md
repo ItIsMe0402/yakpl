@@ -1,16 +1,23 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+This is a Yet Another KMP Product List project, targeting Android, iOS. Both Android & iOS apps can be launched.
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+## Architecture & Tech Stack
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+This project follows **Clean Architecture** principles and utilizes **Kotlin Multiplatform (KMP)** to share business logic, data handling, and UI across Android and iOS.
+
+### Key Technologies
+*   **Kotlin Multiplatform**: Core technology for code sharing.
+*   **Jetpack Compose Multiplatform**: Declarative UI framework shared between Android and iOS.
+*   **Koin**: Dependency Injection framework.
+*   **Ktor**: Asynchronous HTTP client for networking.
+*   **Room**: Local database for persisting data (e.g., Favorites).
+*   **Coroutines & Flow**: Asynchronous programming and reactive state management.
+*   **Mokkery**: Mocking library for unit testing.
+
+### Module Structure
+The project is organized into the following layers within `commonMain`:
+*   **Presentation** (`ui` package): Contains ViewModels and Composable screens (`ProductListScreen`, `ProductDetailScreen`, `FavoritesScreen`).
+*   **Domain** (`domain` and `model` packages): Contains pure business logic, Use Cases (`GetProductsUseCase`, `SetFavoriteUseCase`), and Repository interfaces.
+*   **Data** (`db` and `network` packages): Contains Repository implementations, Data Sources (API, Database), and Entity mappings.
 
 ### Build and Run Android Application
 
@@ -30,6 +37,23 @@ in your IDE’s toolbar or build it directly from the terminal:
 To build and run the development version of the iOS app, use the run configuration from the run widget
 in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
 
----
+### Test Coverage
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+This project uses **Kover** to generate test coverage reports.
+
+To run the tests and generate the report, execute:
+
+```shell
+./gradlew test -Pkover koverHtmlReport
+```
+
+The report will be available at: `build/reports/kover/html/index.html`.
+
+## Further improvements
+
+Obviously, the UI should be improved by:
+  - displaying Product images via e.g. Coil;
+  - displaying more Product details on, well, Product Details screen;
+  - etc
+
+This simple test app sets the foundation upon which further improvements can be made. 

@@ -48,5 +48,8 @@ val databaseModule = module {
 val networkModule = module {
     singleOf(::KtorRemoteProductDataSource) bind RemoteProductDataSource::class
     singleOf(::createJson)
+}
+
+val ktorModule = module {
     singleOf(::createHttpClient)
 }
